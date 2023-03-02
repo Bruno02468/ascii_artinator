@@ -1,4 +1,5 @@
 [workspace]
 members = [
-  "ascii_artinator_api"
+  "ascii_artinator_api",
+  "ascii_artinator_web"
 ]
