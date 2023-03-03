@@ -250,7 +250,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d301b3b94cb4b2f23d7917810addbbaff90738e0ca2be692bd027e70d7e0330c"
 
 [[package]]
-name = "ascii_artinator"
+name = "ascii_artinator_api"
 version = "0.1.0"
 dependencies = [
  "actix-web",
@@ -268,6 +268,8 @@ dependencies = [
 name = "ascii_artinator_web"
 version = "0.1.0"
 dependencies = [
+ "gloo-net",
+ "web-sys",
  "yew",
 ]
 

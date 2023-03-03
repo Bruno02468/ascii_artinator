@@ -1,5 +1,5 @@
 [package]
-name = "ascii_artinator"
+name = "ascii_artinator_api"
 version = "0.1.0"
 edition = "2021"
 
