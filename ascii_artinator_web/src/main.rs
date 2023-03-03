@@ -29,7 +29,7 @@ struct BrailleProps {
     state: BrailleState
 }
 
-/// This displays the current braille string.
+/// This displays the current braille string, or some error.
 struct BrailleDisplay {}
 
 impl Component for BrailleDisplay {
@@ -76,6 +76,9 @@ enum AppMsg {
     SetBrailleState(BrailleState)
 }
 
+/// This is a function that returns a Future for an AppMsg. This way, we can
+/// pass it to send_future and change the state of the component asynchronously
+/// (namely, when the request finishes).
 async fn do_request(img_url: String) -> AppMsg {
     let params = [
         ("img_url", &img_url)
@@ -86,20 +89,30 @@ async fn do_request(img_url: String) -> AppMsg {
         .await;
     let bs: BrailleState = match req {
         Ok(resp) => {
+            // request sent
             if resp.ok() {
+                // response is 200
                 match resp.text().await {
+                    // body could be decoded as text (braille!)
                     Ok(s) => BrailleState::Showing(s.into()),
+                    // body could not be decoded as text (what?)
                     Err(e) => BrailleState::Error(e.to_string().into())
                 }
             } else {
+                // response is not 200 (i.e. error)
                 match resp.text().await {
+                    // error body could be decoded as text (okay)
                     Ok(s) => BrailleState::Error(s.into()),
+                    // error body could *not* be decoded as text (what?!)
                     Err(e) => BrailleState::Error(e.to_string().into())
                 }
             }
         },
+        // request failed to send
         Err(err) => BrailleState::Error(err.to_string().into()),
     };
+    // this message tells the App component to change the state property of
+    // its BrailleDisplay component, thus triggering a redraw
     return AppMsg::SetBrailleState(bs);
 }
 
